@@ -19,7 +19,7 @@ namespace CmswebApI.Controllers
         [HttpGet]
         public string GetCourses()
         {
-            return null;
+            return "Hello, i am divya!";
         }
     }
 
