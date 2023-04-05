@@ -338,3 +338,4 @@ build/contract/swagger-query.json
 build/contract/swagger-command.json
 build/contract/*.ps1
 
+*.json
