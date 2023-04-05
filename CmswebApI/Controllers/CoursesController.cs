@@ -1,5 +1,7 @@
 
 
+using System.Collections.Generic;
+using CmswebApI.Repository.Models;
 using CmswebApI.Repository.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,17 +12,18 @@ namespace CmswebApI.Controllers
     public class CoursesController : ControllerBase
     {
 
-        private ICmsrepository cmsrepository;
+        private readonly ICmsrepository _cmsrepository;
         public CoursesController(ICmsrepository cmsrepository)
         {
-            this.cmsrepository = cmsrepository;
+            this._cmsrepository = cmsrepository;
         }
-        
+
         [HttpGet]
-        public string GetCourses()
+        public IEnumerable<Course> GetCourses()
         {
-            return "Hello, i am divya!";
+            return _cmsrepository.GetAllCourses();
         }
     }
+
 
 }
