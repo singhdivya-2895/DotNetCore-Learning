@@ -37,5 +37,18 @@ namespace CmswebApI.Repository.Repositories
         {
             return courses;
         }
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        {
+           return await Task.Run(() => courses.ToList());
+        }
+
+        public Course AddCourse(Course newCourse)
+        {
+          var maxCourseID = courses.Max(c => c.CourseID);
+          newCourse.CourseID = maxCourseID + 1;
+          // Add Course in Database
+          courses.Add(newCourse);
+          return newCourse;
+        }
     }
 }
