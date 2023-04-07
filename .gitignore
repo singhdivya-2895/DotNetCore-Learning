@@ -340,3 +340,9 @@ build/contract/*.ps1
 
 *.json
 *.cache
+
+Cms.Data.Repository/obj/
+
+CmswebApI/obj/Debug/net6.0/
+
+CmswebApI/obj/

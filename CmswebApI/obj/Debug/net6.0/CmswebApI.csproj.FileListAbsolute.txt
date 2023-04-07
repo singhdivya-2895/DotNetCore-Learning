@@ -1,7 +1,0 @@
-E:\Learning API\CmswebApI\obj\Debug\net6.0\CmswebApI.csproj.AssemblyReference.cache
-E:\Learning API\CmswebApI\obj\Debug\net6.0\CmswebApI.GeneratedMSBuildEditorConfig.editorconfig
-E:\Learning API\CmswebApI\obj\Debug\net6.0\CmswebApI.AssemblyInfoInputs.cache
-E:\Learning API\CmswebApI\obj\Debug\net6.0\CmswebApI.AssemblyInfo.cs
-E:\Learning API\CmswebApI\obj\Debug\net6.0\CmswebApI.csproj.CoreCompileInputs.cache
-E:\Learning API\CmswebApI\obj\Debug\net6.0\CmswebApI.MvcApplicationPartsAssemblyInfo.cs
-E:\Learning API\CmswebApI\obj\Debug\net6.0\CmswebApI.MvcApplicationPartsAssemblyInfo.cache

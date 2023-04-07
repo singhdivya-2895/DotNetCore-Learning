@@ -9,5 +9,8 @@ namespace CmswebApI.Repository.Repositories
     public interface ICmsrepository
     {
         IEnumerable<Course> GetAllCourses();
+        Task<IEnumerable<Course>> GetAllCoursesAsync();
+
+        Course AddCourse(Course newCourse);
     }
 }

@@ -27,6 +27,14 @@ namespace CmswebApI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // AddSingleton: This lifetime creates a single instance of the service that is shared across the entire application. 
+            // Once the service is created, it is reused for each subsequent request for that service.
+
+            // AddTransient: This lifetime creates a new instance of the service for each request. 
+            // This is useful for services that have a short lifespan and are not thread-safe.
+
+            // AddScoped: This lifetime creates a new instance of the service for each HTTP request. 
+            // The instance is shared within the scope of the request, so it can be used by multiple components during the request.
             services.AddSingleton<ICmsrepository, InMemoryCmsRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
