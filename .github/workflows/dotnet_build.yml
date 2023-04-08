@@ -22,7 +22,7 @@ jobs:
         dotnet-version: 6.0.x
         
     - name: Restore dependencies
-      run: dotnet restore --project CmswebApI/CmswebApI.csproj
+      run: dotnet restore CmswebApI/CmswebApI.csproj
       
     - name: Build
-      run: dotnet build --project CmswebApI/CmswebApI.csproj --no-restore
+      run: dotnet build CmswebApI/CmswebApI.csproj --no-restore
