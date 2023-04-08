@@ -12,7 +12,7 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  project: '/CmswebApI/CmswebApI.csproj'
+  project: 'CmswebApI/CmswebApI.csproj'
   buildConfiguration: 'Release'
 
 steps:
