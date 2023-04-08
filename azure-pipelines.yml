@@ -23,13 +23,22 @@ steps:
   displayName: 'Restore NuGet packages'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Build project'
   inputs:
     command: 'build'
     projects: '$(project)'
     arguments: '--configuration $(buildConfiguration)'
-  displayName: 'Build project'
 - task: DotNetCoreCLI@2
+  displayName: 'Publish Project'
   inputs:
     command: 'publish'
     publishWebProjects: true
     arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    modifyOutputPath: true
+    zipAfterPublish: true
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish artifact'
+  inputs:
+    artifactName: 'my-artifact'
+    targetPath: '$(Build.ArtifactStagingDirectory)'
