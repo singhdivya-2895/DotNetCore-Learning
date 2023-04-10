@@ -27,17 +27,27 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
-        public Course GetCourse(int CourseID)
+        public Course GetCourseById(int courseID)
         {
             throw new NotImplementedException();
         }
 
-        public bool IsCourseExists(Course Id)
+        public Task<Course> GetCourseByIdAsync(int courseID)
         {
             throw new NotImplementedException();
         }
 
         public bool IsCourseExists(int courseID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsCourseExistsAsync(int courseID)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> ICmsrepository.IsCourseExistsAsync(int courseID)
         {
             throw new NotImplementedException();
         }

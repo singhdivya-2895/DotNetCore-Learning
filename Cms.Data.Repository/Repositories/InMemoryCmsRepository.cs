@@ -51,7 +51,7 @@ namespace CmswebApI.Repository.Repositories
             return newCourse;
         }
 
-        public Course GetCourse(int courseID)
+        public Course GetCourseById(int courseID)
         {
             var result = courses.Where(c => c.CourseID == courseID)
             .SingleOrDefault();
@@ -60,6 +60,25 @@ namespace CmswebApI.Repository.Repositories
         public bool IsCourseExists(int courseID)
         {
             return courses.Any(c => c.CourseID == courseID);
+        }        
+
+        public async Task<Course> GetCourseByIdAsync(int courseID)
+        {
+            // FirstORDefault:-returns the first element of a sequence that satisfies a specified condition,
+            //  or a default value if no such element is found.
+            //  If the sequence contains more than one element that satisfies the condition,
+            //  it returns the first one. 
+            // SingleOrDefault:- returns the only element of a sequence that satisfies a 
+            // specified condition, or a default value if no such element is found. 
+            // If the sequence contains more than one element that satisfies the condition, it throws an exception.
+            var result = courses.Where(c => c.CourseID == courseID)
+            .SingleOrDefault();
+            return await Task.Run(() => result);
+        }
+        public async Task<bool> IsCourseExistsAsync(int courseID)
+        {
+            // Any returns true if the list contains any item with the defined condition, else return false.
+            return await Task.Run(() => courses.Any(c => c.CourseID == courseID));
         }
     }
 }

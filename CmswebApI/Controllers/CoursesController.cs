@@ -72,16 +72,23 @@ namespace CmswebApI.Controllers
         }
 
         [HttpGet("{courseID}")]
-        public ActionResult<CourseDto> GetCourse(int courseID)
+        public async Task<ActionResult<CourseDto>> GetCourseByIdAsync(int courseID)
         {
             try
             {
-                if (!_cmsrepository.IsCourseExists(courseID))
+                // E.g: Id is 5, so Any will return false if 5 id doesn't exist.
+                // Not of false = True
+                // If executes when the condition inside is true
+                // So if IsCourseExistsAsync will return false, Line 86 will be execute and the function will return from there.
+                if (!await _cmsrepository.IsCourseExistsAsync(courseID))
+                {
                     return NotFound();
+                }
 
-                Course course = _cmsrepository.GetCourse(courseID);
+                Course course = await _cmsrepository.GetCourseByIdAsync(courseID);
                 var result = MappingHelper.MapCourseModelToCourseDto(course);
                 return result;
+
             }
             catch (System.Exception ex)
             {

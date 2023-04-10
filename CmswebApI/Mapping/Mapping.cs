@@ -9,7 +9,6 @@ namespace CmswebApI.Mapping
 {
     public static class MappingHelper
     {
-        
         //Custom mapper functions
         public static CourseDto MapCourseModelToCourseDto(Course course)
         {
@@ -28,7 +27,7 @@ namespace CmswebApI.Mapping
             result = courses.Select(c => MapCourseModelToCourseDto(c));
             return result;
         }
-        
+                
         public static Course MapCourseDtoToCourseModel(CourseDto courseDto)
         {
             return new Course()
