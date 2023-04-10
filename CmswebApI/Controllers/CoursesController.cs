@@ -55,6 +55,8 @@ namespace CmswebApI.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
+
+
         }
         [HttpPost]
         public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
@@ -71,6 +73,8 @@ namespace CmswebApI.Controllers
             }
         }
 
+
+
         [HttpGet("{courseID}")]
         public async Task<ActionResult<CourseDto>> GetCourseByIdAsync(int courseID)
         {
@@ -80,15 +84,14 @@ namespace CmswebApI.Controllers
                 // Not of false = True
                 // If executes when the condition inside is true
                 // So if IsCourseExistsAsync will return false, Line 86 will be execute and the function will return from there.
+
                 if (!await _cmsrepository.IsCourseExistsAsync(courseID))
                 {
                     return NotFound();
                 }
-
                 Course course = await _cmsrepository.GetCourseByIdAsync(courseID);
                 var result = MappingHelper.MapCourseModelToCourseDto(course);
                 return result;
-
             }
             catch (System.Exception ex)
             {
@@ -96,5 +99,25 @@ namespace CmswebApI.Controllers
             }
         }
 
+
+        [HttpPut("{courseID}")]
+        public async Task<ActionResult<CourseDto>> UpdateCourseAsync(int courseID, CourseDto course)
+        {
+            try
+            {
+                if (!_cmsrepository.IsCourseExists(courseID))
+                {
+                    return NotFound();
+                }
+                Course updatedCourseModel = MappingHelper.MapCourseDtoToCourseModel(course);
+                updatedCourseModel = await _cmsrepository.UpdateCourseAsync(courseID, updatedCourseModel);
+                var result = MappingHelper.MapCourseModelToCourseDto(updatedCourseModel);
+                return result;
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
