@@ -9,7 +9,8 @@ trigger:
       - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: Default
+  vmImage: 'agent1-linux'
 
 variables:
   project: 'CmswebApI/CmswebApI.csproj'

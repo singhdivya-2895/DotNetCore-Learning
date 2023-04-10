@@ -7,6 +7,7 @@ using CmswebApI.Repository.Models;
 using CmswebApI.Repository.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using CmswebApI.Mapping;
 
 namespace CmswebApI.Controllers
 {
@@ -47,7 +48,7 @@ namespace CmswebApI.Controllers
             try
             {
                 IEnumerable<Course> courses = await _cmsrepository.GetAllCoursesAsync();
-                var result = MapCourseToCourseDto(courses);
+                var result = MappingHelper.MapCourseModelListToCourseDtoList(courses);
                 return result.ToList();
             }
             catch (System.Exception ex)
@@ -55,59 +56,45 @@ namespace CmswebApI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        //Custom mapper functions
-        private CourseDto MapCourseToCourseDto(Course course)
-        {
-            return new CourseDto()
-            {
-                CourseID = course.CourseID,
-                CourseName = course.CourseName,
-                CourseDuration = course.CourseDuration,
-                CourseType = (CmswebApI.DTOs.COURSE_TYPE)course.CourseType
-            };
-        }
-        private IEnumerable<CourseDto> MapCourseToCourseDto(IEnumerable<Course> courses)
-        {
-            IEnumerable<CourseDto> result;
-
-            result = courses.Select(c => new CourseDto()
-            {
-                CourseID = c.CourseID,
-                CourseName = c.CourseName,
-                CourseDuration = c.CourseDuration,
-                CourseType = (CmswebApI.DTOs.COURSE_TYPE)c.CourseType
-            });
-            return result;
-        }
         [HttpPost]
         public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
         {
             try
             {
-                var courseModel =  MapCourseDtoToCourse(courseDto);
-
-                var newCourse =  _cmsrepository.AddCourse(courseModel);
-
-                return MapCourseToCourseDto(newCourse);
+                var courseModel = MappingHelper.MapCourseDtoToCourseModel(courseDto);
+                var newCourse = _cmsrepository.AddCourse(courseModel);
+                return MappingHelper.MapCourseModelToCourseDto(newCourse);
             }
             catch (System.Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet("{courseID}")]
+        public async Task<ActionResult<CourseDto>> GetCourseByIdAsync(int courseID)
+        {
+            try
+            {
+                // E.g: Id is 5, so Any will return false if 5 id doesn't exist.
+                // Not of false = True
+                // If executes when the condition inside is true
+                // So if IsCourseExistsAsync will return false, Line 86 will be execute and the function will return from there.
+                if (!await _cmsrepository.IsCourseExistsAsync(courseID))
+                {
+                    return NotFound();
+                }
+
+                Course course = await _cmsrepository.GetCourseByIdAsync(courseID);
+                var result = MappingHelper.MapCourseModelToCourseDto(course);
+                return result;
 
             }
-
-        }
-
-        
-        private Course MapCourseDtoToCourse(CourseDto courseDto)
-        {
-            return new Course()
+            catch (System.Exception ex)
             {
-                CourseID = courseDto.CourseID,
-                CourseName = courseDto.CourseName,
-                CourseDuration = courseDto.CourseDuration,
-                CourseType = (Repository.Models.COURSE_TYPE)courseDto.CourseType
-            };
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
+
     }
 }

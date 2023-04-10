@@ -10,7 +10,10 @@ namespace CmswebApI.Repository.Repositories
     {
         IEnumerable<Course> GetAllCourses();
         Task<IEnumerable<Course>> GetAllCoursesAsync();
-
         Course AddCourse(Course newCourse);
+        bool IsCourseExists(int courseID);
+        Course GetCourseById(int courseID);        
+        Task<bool> IsCourseExistsAsync(int courseID);
+        Task<Course> GetCourseByIdAsync(int courseID);
     }
 }
