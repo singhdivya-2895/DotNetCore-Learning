@@ -39,7 +39,7 @@ namespace CmswebApI
             // AddScoped: This lifetime creates a new instance of the service for each HTTP request. 
             // The instance is shared within the scope of the request, so it can be used by multiple components during the request.
             services.AddSingleton<ICmsrepository, InMemoryCmsRepository>();
-            
+
             // Registering all fluent validators that are in assembly which have CourseDtoValidation (including)
             services.AddControllers()
                 .AddFluentValidation(fv =>
@@ -58,10 +58,10 @@ namespace CmswebApI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
             }
 
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -70,7 +70,14 @@ namespace CmswebApI
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllers();
+                endpoints.MapControllers();    
+                
+                // redirect the root URL to the Swagger UI URL
+                endpoints.MapGet("/", context =>
+                {
+                    context.Response.Redirect("/swagger");
+                    return Task.CompletedTask;
+                });
             });
         }
     }
