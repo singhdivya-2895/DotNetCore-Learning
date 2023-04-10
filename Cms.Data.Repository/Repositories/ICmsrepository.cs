@@ -15,6 +15,6 @@ namespace CmswebApI.Repository.Repositories
         Course GetCourseById(int courseID);
         Task<bool> IsCourseExistsAsync(int courseID);
         Task<Course> GetCourseByIdAsync(int courseID);
-        Course UpdateCourse(int courseID , Course Newcourse);
+        Task<Course> UpdateCourseAsync(int courseID , Course Newcourse);
     }
 }

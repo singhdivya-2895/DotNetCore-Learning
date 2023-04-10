@@ -56,7 +56,7 @@ namespace CmswebApI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
 
-            
+
         }
         [HttpPost]
         public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
@@ -101,22 +101,22 @@ namespace CmswebApI.Controllers
 
 
         [HttpPut("{courseID}")]
-        public ActionResult<CourseDto> UpdateCourse(int courseID, CourseDto course)
+        public async Task<ActionResult<CourseDto>> UpdateCourseAsync(int courseID, CourseDto course)
         {
             try
             {
-               if(!_cmsrepository.IsCourseExists(courseID)) 
-               {
-                return NotFound();
-               }
-               Course Updatedcourse = MappingHelper.MapCourseDtoToCourseModel(course);
-               Updatedcourse = _cmsrepository.UpdateCourse(courseID,Updatedcourse);
-               var result = MappingHelper.MapCourseModelToCourseDto(Updatedcourse);
-               return result;
+                if (!_cmsrepository.IsCourseExists(courseID))
+                {
+                    return NotFound();
+                }
+                Course updatedCourseModel = MappingHelper.MapCourseDtoToCourseModel(course);
+                updatedCourseModel = await _cmsrepository.UpdateCourseAsync(courseID, updatedCourseModel);
+                var result = MappingHelper.MapCourseModelToCourseDto(updatedCourseModel);
+                return result;
             }
             catch (System.Exception ex)
             {
-             return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);             
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
     }

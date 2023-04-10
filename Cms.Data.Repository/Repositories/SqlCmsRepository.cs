@@ -47,7 +47,7 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
-        public Course UpdateCourse(int courseID, Course Newcourse)
+        public async Task<Course> UpdateCourseAsync(int courseID, Course Newcourse)
         {
             throw new NotImplementedException();
         }

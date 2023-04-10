@@ -8,11 +8,11 @@ namespace CmswebApI.Repository.Repositories
 {
     public class InMemoryCmsRepository : ICmsrepository
     {
-        List<Course> course = null;
+        List<Course> courseList = null;
         public InMemoryCmsRepository()
         {
-            course = new List<Course>();
-            course.Add
+            courseList = new List<Course>();
+            courseList.Add
             (
               new Course()
               {
@@ -22,7 +22,7 @@ namespace CmswebApI.Repository.Repositories
                   CourseType = COURSE_TYPE.Engineering
               }
             );
-            course.Add
+            courseList.Add
            (
              new Course()
              {
@@ -35,31 +35,31 @@ namespace CmswebApI.Repository.Repositories
         }
         public IEnumerable<Course> GetAllCourses()
         {
-            return course;
+            return courseList;
         }
         public async Task<IEnumerable<Course>> GetAllCoursesAsync()
         {
-            return await Task.Run(() => course.ToList());
+            return await Task.Run(() => courseList.ToList());
         }
 
         public Course AddCourse(Course newCourse)
         {
-            var maxCourseID = course.Max(c => c.CourseID);
+            var maxCourseID = courseList.Max(c => c.CourseID);
             newCourse.CourseID = maxCourseID + 1;
-            // Add Course in Database
-            course.Add(newCourse);
+            // Add Course in Database in future
+            courseList.Add(newCourse);
             return newCourse;
         }
 
         public Course GetCourseById(int courseID)
         {
-            var result = course.Where(c => c.CourseID == courseID)
-            .SingleOrDefault();
+            var result = courseList.Where(c => c.CourseID == courseID)
+                        .SingleOrDefault();
             return result;
         }
         public bool IsCourseExists(int courseID)
         {
-            return course.Any(c => c.CourseID == courseID);
+            return courseList.Any(c => c.CourseID == courseID);
         }        
 
         public async Task<Course> GetCourseByIdAsync(int courseID)
@@ -71,27 +71,26 @@ namespace CmswebApI.Repository.Repositories
             // SingleOrDefault:- returns the only element of a sequence that satisfies a 
             // specified condition, or a default value if no such element is found. 
             // If the sequence contains more than one element that satisfies the condition, it throws an exception.
-            var result = course.Where(c => c.CourseID == courseID)
-            .SingleOrDefault();
+            var result = courseList.Where(c => c.CourseID == courseID)
+                        .SingleOrDefault();
             return await Task.Run(() => result);
         }
         public async Task<bool> IsCourseExistsAsync(int courseID)
         {
             // Any returns true if the list contains any item with the defined condition, else return false.
-            return await Task.Run(() => course.Any(c => c.CourseID == courseID));
+            return await Task.Run(() => courseList.Any(c => c.CourseID == courseID));
         }
-        public Course UpdateCourse(int courseID, Course Updatedcourse)
+        public async Task<Course> UpdateCourseAsync(int courseID, Course Updatedcourse)
         {
-            var result = course.Where(c => c.CourseID == courseID)
-            .SingleOrDefault();
+            var result = await GetCourseByIdAsync(courseID);
 
-            if(result != null)
+            if(result != null) // Null when the course with this id wont exist
             {
               result.CourseName = Updatedcourse.CourseName;
               result.CourseDuration = Updatedcourse.CourseDuration;
               result.CourseType = Updatedcourse.CourseType;
-
             }
+            // Normally you will send the updates back to source i.e. Database
             return result;
         }
     }
