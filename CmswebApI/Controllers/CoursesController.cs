@@ -7,6 +7,7 @@ using CmswebApI.Repository.Models;
 using CmswebApI.Repository.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using CmswebApI.Mapping;
 
 namespace CmswebApI.Controllers
 {
@@ -47,7 +48,7 @@ namespace CmswebApI.Controllers
             try
             {
                 IEnumerable<Course> courses = await _cmsrepository.GetAllCoursesAsync();
-                var result = MapCourseToCourseDto(courses);
+                var result = MappingHelper.MapCourseModelListToCourseDtoList(courses);
                 return result.ToList();
             }
             catch (System.Exception ex)
@@ -55,59 +56,38 @@ namespace CmswebApI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        //Custom mapper functions
-        private CourseDto MapCourseToCourseDto(Course course)
-        {
-            return new CourseDto()
-            {
-                CourseID = course.CourseID,
-                CourseName = course.CourseName,
-                CourseDuration = course.CourseDuration,
-                CourseType = (CmswebApI.DTOs.COURSE_TYPE)course.CourseType
-            };
-        }
-        private IEnumerable<CourseDto> MapCourseToCourseDto(IEnumerable<Course> courses)
-        {
-            IEnumerable<CourseDto> result;
-
-            result = courses.Select(c => new CourseDto()
-            {
-                CourseID = c.CourseID,
-                CourseName = c.CourseName,
-                CourseDuration = c.CourseDuration,
-                CourseType = (CmswebApI.DTOs.COURSE_TYPE)c.CourseType
-            });
-            return result;
-        }
         [HttpPost]
         public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
         {
             try
             {
-                var courseModel =  MapCourseDtoToCourse(courseDto);
-
-                var newCourse =  _cmsrepository.AddCourse(courseModel);
-
-                return MapCourseToCourseDto(newCourse);
+                var courseModel = MappingHelper.MapCourseDtoToCourse(courseDto);
+                var newCourse = _cmsrepository.AddCourse(courseModel);
+                return MappingHelper.MapCourseModelToCourseDto(newCourse);
             }
             catch (System.Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-
             }
-
         }
 
-        
-        private Course MapCourseDtoToCourse(CourseDto courseDto)
+        [HttpGet("{courseID}")]
+        public ActionResult<CourseDto> GetCourse(int courseID)
         {
-            return new Course()
+            try
             {
-                CourseID = courseDto.CourseID,
-                CourseName = courseDto.CourseName,
-                CourseDuration = courseDto.CourseDuration,
-                CourseType = (Repository.Models.COURSE_TYPE)courseDto.CourseType
-            };
+                if (!_cmsrepository.IsCourseExists(courseID))
+                    return NotFound();
+
+                Course course = _cmsrepository.GetCourse(courseID);
+                var result = MappingHelper.MapCourseModelToCourseDto(course);
+                return result;
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
         }
+
     }
 }

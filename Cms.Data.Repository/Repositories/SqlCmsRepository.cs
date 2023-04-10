@@ -26,5 +26,20 @@ namespace CmswebApI.Repository.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public Course GetCourse(int CourseID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsCourseExists(Course Id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool IsCourseExists(int courseID)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
