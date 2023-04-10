@@ -7,8 +7,6 @@ trigger:
   branches:
     include:
       - main
-  - pr:
-    - main
 
 pool:
   name: Default
