@@ -61,7 +61,7 @@ namespace CmswebApI.Controllers
         {
             try
             {
-                var courseModel = MappingHelper.MapCourseDtoToCourse(courseDto);
+                var courseModel = MappingHelper.MapCourseDtoToCourseModel(courseDto);
                 var newCourse = _cmsrepository.AddCourse(courseModel);
                 return MappingHelper.MapCourseModelToCourseDto(newCourse);
             }
