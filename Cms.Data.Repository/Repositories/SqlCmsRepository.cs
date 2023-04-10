@@ -47,6 +47,11 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
+        public Course UpdateCourse(int courseID, Course Newcourse)
+        {
+            throw new NotImplementedException();
+        }
+
         Task<bool> ICmsrepository.IsCourseExistsAsync(int courseID)
         {
             throw new NotImplementedException();
