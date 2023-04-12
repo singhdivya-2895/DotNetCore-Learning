@@ -17,6 +17,11 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<Course> DeleteCourseByIdAsync(int courseID)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Course> GetAllCourses()
         {
             return null;

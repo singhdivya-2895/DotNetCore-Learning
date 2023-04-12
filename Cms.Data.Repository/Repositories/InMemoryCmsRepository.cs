@@ -93,5 +93,16 @@ namespace CmswebApI.Repository.Repositories
             // Normally you will send the updates back to source i.e. Database
             return result;
         }
+
+        public  async Task<Course> DeleteCourseByIdAsync(int courseID)
+        {
+            var result = courseList.Where(c => c.CourseID == courseID)
+                        .SingleOrDefault();
+                  if (result != null)
+                  {
+                    courseList.Remove(result);
+                  }      
+            return await Task.Run(() => result);
+        }
     }
 }
