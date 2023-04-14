@@ -17,6 +17,11 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
+        public Task<Course> DeleteCourseByIdAsync(int courseID)
+        {
+            throw new NotImplementedException();
+        }
+
         public IEnumerable<Course> GetAllCourses()
         {
             return null;
@@ -48,6 +53,11 @@ namespace CmswebApI.Repository.Repositories
         }
 
         public async Task<Course> UpdateCourseAsync(int courseID, Course Newcourse)
+        {
+            throw new NotImplementedException();
+        }
+
+        Task<bool> ICmsrepository.DeleteCourseByIdAsync(int courseID)
         {
             throw new NotImplementedException();
         }

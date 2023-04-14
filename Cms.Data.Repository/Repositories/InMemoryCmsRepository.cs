@@ -53,14 +53,13 @@ namespace CmswebApI.Repository.Repositories
 
         public Course GetCourseById(int courseID)
         {
-            var result = courseList.Where(c => c.CourseID == courseID)
-                        .SingleOrDefault();
+            var result = courseList.SingleOrDefault(c => c.CourseID == courseID);
             return result;
         }
         public bool IsCourseExists(int courseID)
         {
             return courseList.Any(c => c.CourseID == courseID);
-        }        
+        }
 
         public async Task<Course> GetCourseByIdAsync(int courseID)
         {
@@ -71,8 +70,7 @@ namespace CmswebApI.Repository.Repositories
             // SingleOrDefault:- returns the only element of a sequence that satisfies a 
             // specified condition, or a default value if no such element is found. 
             // If the sequence contains more than one element that satisfies the condition, it throws an exception.
-            var result = courseList.Where(c => c.CourseID == courseID)
-                        .SingleOrDefault();
+            var result = courseList.SingleOrDefault(c => c.CourseID == courseID);
             return await Task.Run(() => result);
         }
         public async Task<bool> IsCourseExistsAsync(int courseID)
@@ -84,14 +82,25 @@ namespace CmswebApI.Repository.Repositories
         {
             var result = await GetCourseByIdAsync(courseID);
 
-            if(result != null) // Null when the course with this id wont exist
+            if (result != null) // Null when the course with this id wont exist
             {
-              result.CourseName = Updatedcourse.CourseName;
-              result.CourseDuration = Updatedcourse.CourseDuration;
-              result.CourseType = Updatedcourse.CourseType;
+                result.CourseName = Updatedcourse.CourseName;
+                result.CourseDuration = Updatedcourse.CourseDuration;
+                result.CourseType = Updatedcourse.CourseType;
             }
             // Normally you will send the updates back to source i.e. Database
             return result;
+        }
+
+        public async Task<bool> DeleteCourseByIdAsync(int courseID)
+        {
+            var result = courseList.SingleOrDefault(c => c.CourseID == courseID);
+            if (result == null)
+            {
+                return false;
+            }
+            courseList.Remove(result);
+            return true; 
         }
     }
 }
