@@ -8,6 +8,7 @@ using CmswebApI.Repository.Repositories;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CmswebApI.Mapping;
+using Cms.Data.Repository.Models;
 
 namespace CmswebApI.Controllers
 {
@@ -149,5 +150,24 @@ namespace CmswebApI.Controllers
             }
         }
 #endregion
+        //  Association Get 1/Student
+         [HttpGet("{courseID}/Student")]
+        public  ActionResult<IEnumerable<StudentDto>> GetStudent(int courseID)
+        {
+            try
+            {
+                if (! _cmsrepository.IsCourseExists(courseID))
+                {
+                    return NotFound();
+                }
+                IEnumerable<Student> studentModelList =  _cmsrepository.GetStudent(courseID);
+                var result = MappingHelper.MapStudentModelListToStudentDtoList(studentModelList);
+                return result.ToList();
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
     }
 }
