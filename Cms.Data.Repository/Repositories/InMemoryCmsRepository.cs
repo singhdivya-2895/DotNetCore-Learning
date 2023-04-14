@@ -60,7 +60,7 @@ namespace CmswebApI.Repository.Repositories
         public bool IsCourseExists(int courseID)
         {
             return courseList.Any(c => c.CourseID == courseID);
-        }        
+        }
 
         public async Task<Course> GetCourseByIdAsync(int courseID)
         {
@@ -84,25 +84,26 @@ namespace CmswebApI.Repository.Repositories
         {
             var result = await GetCourseByIdAsync(courseID);
 
-            if(result != null) // Null when the course with this id wont exist
+            if (result != null) // Null when the course with this id wont exist
             {
-              result.CourseName = Updatedcourse.CourseName;
-              result.CourseDuration = Updatedcourse.CourseDuration;
-              result.CourseType = Updatedcourse.CourseType;
+                result.CourseName = Updatedcourse.CourseName;
+                result.CourseDuration = Updatedcourse.CourseDuration;
+                result.CourseType = Updatedcourse.CourseType;
             }
             // Normally you will send the updates back to source i.e. Database
             return result;
         }
 
-        public  async Task<Course> DeleteCourseByIdAsync(int courseID)
+        public async Task<bool> DeleteCourseByIdAsync(int courseID)
         {
             var result = courseList.Where(c => c.CourseID == courseID)
                         .SingleOrDefault();
-                  if (result != null)
-                  {
-                    courseList.Remove(result);
-                  }      
-            return await Task.Run(() => result);
+            if (result == null)
+            {
+                return false;
+            }
+            courseList.Remove(result);
+            return true; 
         }
     }
 }

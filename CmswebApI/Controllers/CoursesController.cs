@@ -42,6 +42,7 @@ namespace CmswebApI.Controllers
         //     }
         // }
         //  Approach 2 Using IActionResult
+#region "Get Routes"
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesAsync()
         {
@@ -55,24 +56,8 @@ namespace CmswebApI.Controllers
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
-
-
         }
-        [HttpPost]
-        public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
-        {
-            try
-            {
-                var courseModel = MappingHelper.MapCourseDtoToCourseModel(courseDto);
-                var newCourse = _cmsrepository.AddCourse(courseModel);
-                return MappingHelper.MapCourseModelToCourseDto(newCourse);
-            }
-            catch (System.Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
-            }
-        }
-
+        
         [HttpGet("{courseID}")]
         public async Task<ActionResult<CourseDto>> GetCourseByIdAsync(int courseID)
         {
@@ -97,7 +82,27 @@ namespace CmswebApI.Controllers
             }
         }
 
+#endregion
 
+#region "Post Routes"
+        [HttpPost]
+        public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
+        {
+            try
+            {
+                var courseModel = MappingHelper.MapCourseDtoToCourseModel(courseDto);
+                var newCourse = _cmsrepository.AddCourse(courseModel);
+                return MappingHelper.MapCourseModelToCourseDto(newCourse);
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+#endregion
+
+#region "Put Routes"
         [HttpPut("{courseID}")]
         public async Task<ActionResult<CourseDto>> UpdateCourseAsync(int courseID, CourseDto course)
         {
@@ -117,7 +122,9 @@ namespace CmswebApI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
+#endregion
 
+#region "Delete Route"
         [HttpDelete("{courseID}")]
         public async Task<ActionResult<CourseDto>> DeleteCourseByIdAsync(int courseID)
         {
@@ -125,22 +132,22 @@ namespace CmswebApI.Controllers
             {
                 if (!await _cmsrepository.IsCourseExistsAsync(courseID))
                 {
-                    return NotFound();
+                    return BadRequest($"Course with Id {courseID} not found");
                 }
-                Course course = await _cmsrepository.DeleteCourseByIdAsync(courseID);
+                var result = await _cmsrepository.DeleteCourseByIdAsync(courseID);
 
-                if (course == null)
+                if (!result)
                 {
                     return BadRequest();
                 }
-                var result = MappingHelper.MapCourseModelToCourseDto(course);
-                return result;
+              
+                return Ok();
             }
             catch (System.Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-
+#endregion
     }
 }

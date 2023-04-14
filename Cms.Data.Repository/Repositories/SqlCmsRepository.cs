@@ -57,6 +57,11 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
+        Task<bool> ICmsrepository.DeleteCourseByIdAsync(int courseID)
+        {
+            throw new NotImplementedException();
+        }
+
         Task<bool> ICmsrepository.IsCourseExistsAsync(int courseID)
         {
             throw new NotImplementedException();
