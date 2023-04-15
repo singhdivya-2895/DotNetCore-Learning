@@ -20,7 +20,7 @@ jobs:
         fetch-depth: 0
 
     - name: Set Branch Name
-      run: echo "BRANCH_NAME=${GITHUB_REF##*/}" >> $GITHUB_ENV
+      run: echo "BRANCH_NAME=${GITHUB_REF##*origin/}" >> $GITHUB_ENV
 
     - name: Check Branch Name
       run: echo $BRANCH_NAME
@@ -42,5 +42,5 @@ jobs:
         # Optional command arguments to dotnet test
         dotnetTestArguments: ./test/CmsWebApi.Test/ --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         # Optional extra command arguments the the SonarScanner 'begin' command
-        sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" -d::sonar.branch.name=$BRANCH_NAME
+        sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" -d:sonar.branch.name=$BRANCH_NAME
           
