@@ -32,7 +32,9 @@ steps:
     projectKey: 'dotnetcore-learning'
     projectName: 'DotnetCore Learning'
     extraProperties: |
-      sonar.cs.opencover.reportsPaths;=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml,$(Build.SourcesDirectory)/TestResults/Coverage/coverage.cobertura.xml
+      sonar.sources=$(ProjectParentFolder)/$(ProjectName)/
+      sonar.cs.opencover.reportsPaths=$(Build.SourcesDirectory)/**/coverage.opencover.xml
+      sonar.cs.roslyn.ignoreIssues=true
 
 - task: DotNetCoreCLI@2
   displayName: 'Build project'
@@ -59,9 +61,21 @@ steps:
   displayName: 'Run unit tests'
   inputs:
     command: 'test'
-    arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura%2copencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+    arguments: '--no-build --configuration $(buildConfiguration) --logger "trx" /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
     publishTestResults: true
     projects: '**/*Test.csproj'
+
+- script: |
+    reportgenerator "-reports:$(Build.SourcesDirectory)/**/coverage.opencover.xml" "-targetDir:$(Build.SourcesDirectory)/**/coverage.opencover.xml" -tag:$(Build.BuildNumber) "-reporttypes:Cobertura;HTMLInline;HTMLChart"
+  displayName: 'Create code coverage report'
+
+- task: PublishCodeCoverageResults@1
+  displayName: "Publish code coverage"
+  inputs:
+    codeCoverageTool: Cobertura
+    summaryFileLocation: $(Build.SourcesDirectory)/**/coverage.opencover.xml/Cobertura.xml
+    reportDirectory: $(Build.SourcesDirectory)/**/coverage.opencover.xml
+    failIfCoverageEmpty: false
 
 - task: SonarCloudAnalyze@1
   displayName: "Sonar - Run Code Analysis"
@@ -70,16 +84,6 @@ steps:
   displayName: "Sonar - Publish Quality Gate Results"
   inputs:
     pollingTimeoutSec: '300'
-
-- script: |
-    reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
-  displayName: 'Create code coverage report'
-
-- task: PublishCodeCoverageResults@1
-  displayName: 'Publish code coverage report'
-  inputs:
-    codeCoverageTool: 'cobertura'
-    summaryFileLocation: '$(Build.SourcesDirectory)/**/coverage.cobertura.xml'
 
 - task: DotNetCoreCLI@2
   displayName: 'Publish Project'
