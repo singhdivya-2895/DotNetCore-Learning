@@ -19,7 +19,7 @@ namespace CmswebApI.Controllers
         private readonly ICmsrepository _cmsrepository;
         public CoursesController(ICmsrepository cmsrepository)
         {
-            this._cmsrepository = cmsrepository;
+            this._cmsrepository = cmsrepository ?? throw new ArgumentNullException(nameof(cmsrepository));
         }
         //Approach 1
         // [HttpGet]
