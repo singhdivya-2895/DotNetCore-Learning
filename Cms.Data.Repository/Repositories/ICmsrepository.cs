@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cms.Data.Repository.Models;
 using CmswebApI.Repository.Models;
 
 namespace CmswebApI.Repository.Repositories
@@ -17,5 +18,9 @@ namespace CmswebApI.Repository.Repositories
         Task<Course> GetCourseByIdAsync(int courseID);
         Task<Course> UpdateCourseAsync(int courseID , Course Newcourse);
         Task<bool> DeleteCourseByIdAsync(int courseID);
+        //Assoiation  
+         IEnumerable<Student> GetStudent(int courseId);
+         Student AddStudent(int courseID,Student student);
+         
     }
 }

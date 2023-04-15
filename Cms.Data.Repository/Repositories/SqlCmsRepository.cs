@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cms.Data.Repository.Models;
 using CmswebApI.Repository.Models;
 
 namespace CmswebApI.Repository.Repositories
@@ -13,6 +14,11 @@ namespace CmswebApI.Repository.Repositories
         }
 
         public Course AddCourse(Course newCourse)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Student AddStudent(int courseId, Student student)
         {
             throw new NotImplementedException();
         }
@@ -38,6 +44,11 @@ namespace CmswebApI.Repository.Repositories
         }
 
         public Task<Course> GetCourseByIdAsync(int courseID)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Student> GetStudent(int courseId)
         {
             throw new NotImplementedException();
         }

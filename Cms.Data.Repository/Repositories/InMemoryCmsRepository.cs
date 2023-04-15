@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Cms.Data.Repository.Models;
 using CmswebApI.Repository.Models;
 
 namespace CmswebApI.Repository.Repositories
@@ -9,29 +10,55 @@ namespace CmswebApI.Repository.Repositories
     public class InMemoryCmsRepository : ICmsrepository
     {
         List<Course> courseList = null;
+        List<Student> studentList = null;
         public InMemoryCmsRepository()
         {
-            courseList = new List<Course>();
-            courseList.Add
-            (
-              new Course()
+            courseList = new List<Course>(){
+              new ()
               {
                   CourseID = 1,
                   CourseName = "Computer Science",
                   CourseDuration = 4,
                   CourseType = COURSE_TYPE.Engineering
-              }
-            );
-            courseList.Add
-           (
-             new Course()
+              },
+             new ()
              {
                  CourseID = 2,
                  CourseName = "Information Technology",
                  CourseDuration = 4,
                  CourseType = COURSE_TYPE.Engineering
              }
-           );
+            };
+
+            studentList = new List<Student>(){
+                new Student()
+              {
+                  StudentId = 100,
+                  FirstName = "Divya",
+                  LastName = "Chaudhary",
+                  PhoneNumber = "0451601867",
+                  Address = "Australia",
+                  course = courseList.Where(c => c.CourseID == 1).SingleOrDefault()
+              },
+              new Student()
+              {
+                  StudentId = 105,
+                  FirstName = "Mini",
+                  LastName = "Chaudhary",
+                  PhoneNumber = "0000000000",
+                  Address = "India",
+                  course = courseList.Where(c => c.CourseID == 1).SingleOrDefault()
+              },
+              new Student()
+             {
+                 StudentId = 101,
+                 FirstName = "Pankaj",
+                 LastName = "Chaudhary",
+                 PhoneNumber = "0451601867",
+                 Address = "US",
+                 course = courseList.Where(c => c.CourseID == 2).SingleOrDefault()
+             }
+            };
         }
         public IEnumerable<Course> GetAllCourses()
         {
@@ -100,7 +127,25 @@ namespace CmswebApI.Repository.Repositories
                 return false;
             }
             courseList.Remove(result);
-            return true; 
+            return true;
         }
+
+        public IEnumerable<Student> GetStudent(int courseId)
+        {
+            return studentList.Where(s => s.course.CourseID == courseId);
+        }
+
+
+        public Student AddStudent(int courseID, Student newStudent)
+        {
+            var maxStudentId = studentList.Max(c => c.StudentId);
+            newStudent.StudentId = maxStudentId + 1;
+            Course courseToAdd = GetCourseById(courseID);
+            newStudent.course = courseToAdd;
+            studentList.Add(newStudent);
+            return newStudent;
+        }
+
     }
 }
+

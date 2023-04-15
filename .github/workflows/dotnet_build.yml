@@ -5,9 +5,12 @@ name: .NET
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "feature/*" ]
   pull_request:
     branches: [ "main" ]
+
+env:
+  BRANCH_NAME: ${GITHUB_REF##*refs/heads/}
 
 jobs:
   build:
@@ -16,13 +19,46 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 6.0.x
-        
-    - name: Restore dependencies
-      run: dotnet restore CmswebApI/CmswebApI.csproj
-      
-    - name: Build
-      run: dotnet build CmswebApI/CmswebApI.csproj --no-restore
+        fetch-depth: 0
+
+    - name: Build, Test and Sonar Analyse for Branch Push
+      uses: highbyte/sonarscan-dotnet@v2.1.3      
+      if: github.event_name == 'push'
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # The key of the SonarQube project
+        sonarProjectKey: dotnetcore-learning
+        # The name of the SonarQube project
+        sonarProjectName:  DotnetCore Learning
+        # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+        sonarOrganization: singhdivya-2895
+        # Optional command arguments to dotnet build
+        dotnetBuildArguments: ./CmswebApI
+        # Optional command arguments to dotnet test
+        dotnetTestArguments: ./test/CmsWebApi.Test/ --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        # Optional extra command arguments the the SonarScanner 'begin' command
+        sonarBeginArguments: /d:sonar.branch.name=${{ env.BRANCH_NAME }} -d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+
+
+    - name: Build, Test and Sonar Analyse for Pull Request
+      uses: highbyte/sonarscan-dotnet@v2.1.3      
+      if: github.event_name == 'pull_request'
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # The key of the SonarQube project
+        sonarProjectKey: dotnetcore-learning
+        # The name of the SonarQube project
+        sonarProjectName:  DotnetCore Learning
+        # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+        sonarOrganization: singhdivya-2895
+        # Optional command arguments to dotnet build
+        dotnetBuildArguments: ./CmswebApI
+        # Optional command arguments to dotnet test
+        dotnetTestArguments: ./test/CmsWebApi.Test/ --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        # Optional extra command arguments the the SonarScanner 'begin' command
+        sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
