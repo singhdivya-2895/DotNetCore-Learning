@@ -18,26 +18,23 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0  
-        
-    - name: Restore dependencies
-      run: ls -la ./test/CmsWebApi.Test
 
-    # - name: SonarScanner for .NET 7 with pull request decoration support
-    #   uses: highbyte/sonarscan-dotnet@v2.2.2
-    #   env:
-    #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    #   with:
-    #     # The key of the SonarQube project
-    #     sonarProjectKey: dotnetcore-learning
-    #     # The name of the SonarQube project
-    #     sonarProjectName:  DotnetCore Learning
-    #     # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
-    #     sonarOrganization: singhdivya-2895
-    #     # Optional command arguments to dotnet build
-    #     dotnetBuildArguments: ./CmswebApI --configuration Debug
-    #     # Optional command arguments to dotnet test
-    #     dotnetTestArguments: ./test/CmsWebApi.Test/ --no-build --configuration Debug --logger "trx" /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=$(pwd)/TestResults/Coverage/
-    #     # Optional extra command arguments the the SonarScanner 'begin' command
-    #     sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" -d:sonar.cs.roslyn.ignoreIssues=true
+    - name: SonarScanner for .NET 7 with pull request decoration support
+      uses: highbyte/sonarscan-dotnet@v2.2.2
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        # The key of the SonarQube project
+        sonarProjectKey: dotnetcore-learning
+        # The name of the SonarQube project
+        sonarProjectName:  DotnetCore Learning
+        # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
+        sonarOrganization: singhdivya-2895
+        # Optional command arguments to dotnet build
+        dotnetBuildArguments: ./CmswebApI --configuration Debug
+        # Optional command arguments to dotnet test
+        dotnetTestArguments: ./test/CmsWebApi.Test/ --no-build --configuration Debug --logger "trx" /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=$(pwd)/TestResults/Coverage/
+        # Optional extra command arguments the the SonarScanner 'begin' command
+        sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" -d:sonar.cs.roslyn.ignoreIssues=true
           
