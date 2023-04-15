@@ -44,13 +44,6 @@ steps:
     arguments: '--configuration $(buildConfiguration)'
 
 - task: DotNetCoreCLI@2
-  displayName: 'Install OpenCover'
-  inputs:
-    command: custom
-    custom: tool
-    arguments: 'install -g dotnet-opencover'
-
-- task: DotNetCoreCLI@2
   displayName: 'Install ReportGenerator'
   inputs:
     command: custom
