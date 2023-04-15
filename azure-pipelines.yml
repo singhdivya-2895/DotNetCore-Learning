@@ -28,7 +28,7 @@ steps:
     SonarCloud: 'Sonar Cloud'
     organization: 'singhdivya-2895'
     scannerMode: 'MSBuild'
-    projectKey: 'singhdivya-2895_DotNetCore-Learning'
+    projectKey: 'dotnetcore-learning'
     projectName: 'DotnetCore Learning'
     extraProperties: |
       sonar.cs.opencover.reportsPaths;=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml 
