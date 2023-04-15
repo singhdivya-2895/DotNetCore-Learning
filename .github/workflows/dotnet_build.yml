@@ -45,7 +45,7 @@ jobs:
         # The name of the SonarQube organization in SonarCloud. For hosted SonarQube, skip this setting.
         sonarOrganization: singhdivya-2895
         # Optional command arguments to dotnet build
-        dotnetBuildArguments: /CmswebApI --configuration Debug
+        dotnetBuildArguments: ./CmswebApI --configuration Debug
         # Optional command arguments to dotnet test
         dotnetTestArguments: ../CmswebApI.Test/ --no-build --configuration Debug --logger "trx" /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
         # Optional extra command arguments the the SonarScanner 'begin' command
