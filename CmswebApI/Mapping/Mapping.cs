@@ -56,8 +56,20 @@ namespace CmswebApI.Mapping
                 LastName = studentModel.LastName,
                 PhoneNumber = studentModel.PhoneNumber,
                 Address = studentModel.Address,
-                // Course = MapCourseModelToCourseDto(studentModel.course)
+                CourseName = studentModel.course.CourseName
             };
+        }
+
+        public static Student MapStudentDtoToStudentModel(StudentDto studentDto)
+        {
+          return  new Student()
+          {
+            StudentId = studentDto.StudentId,
+            FirstName= studentDto.FirstName,
+            LastName= studentDto.LastName,
+            PhoneNumber = studentDto.PhoneNumber,
+            Address = studentDto.Address
+          };
         }
     }
 }

@@ -43,7 +43,7 @@ namespace CmswebApI.Controllers
         //     }
         // }
         //  Approach 2 Using IActionResult
-#region "Get Routes"
+        #region "Get Routes"
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesAsync()
         {
@@ -58,7 +58,7 @@ namespace CmswebApI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-        
+
         [HttpGet("{courseID}")]
         public async Task<ActionResult<CourseDto>> GetCourseByIdAsync(int courseID)
         {
@@ -83,9 +83,9 @@ namespace CmswebApI.Controllers
             }
         }
 
-#endregion
+        #endregion
 
-#region "Post Routes"
+        #region "Post Routes"
         [HttpPost]
         public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
         {
@@ -101,9 +101,9 @@ namespace CmswebApI.Controllers
             }
         }
 
-#endregion
+        #endregion
 
-#region "Put Routes"
+        #region "Put Routes"
         [HttpPut("{courseID}")]
         public async Task<ActionResult<CourseDto>> UpdateCourseAsync(int courseID, CourseDto course)
         {
@@ -123,9 +123,9 @@ namespace CmswebApI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-#endregion
+        #endregion
 
-#region "Delete Route"
+        #region "Delete Route"
         [HttpDelete("{courseID}")]
         public async Task<ActionResult<CourseDto>> DeleteCourseByIdAsync(int courseID)
         {
@@ -141,7 +141,7 @@ namespace CmswebApI.Controllers
                 {
                     return BadRequest();
                 }
-              
+
                 return Ok();
             }
             catch (System.Exception ex)
@@ -149,20 +149,42 @@ namespace CmswebApI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
-#endregion
+        #endregion
         //  Association Get 1/Student
-         [HttpGet("{courseID}/Student")]
-        public  ActionResult<IEnumerable<StudentDto>> GetStudent(int courseID)
+        [HttpGet("{courseID}/Student")]
+        public ActionResult<IEnumerable<StudentDto>> GetStudent(int courseID)
         {
             try
             {
-                if (! _cmsrepository.IsCourseExists(courseID))
+                if (!_cmsrepository.IsCourseExists(courseID))
                 {
                     return NotFound();
                 }
-                IEnumerable<Student> studentModelList =  _cmsrepository.GetStudent(courseID);
+                IEnumerable<Student> studentModelList = _cmsrepository.GetStudent(courseID);
                 var result = MappingHelper.MapStudentModelListToStudentDtoList(studentModelList);
                 return result.ToList();
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        // To Add Student to the Course
+        [HttpPost("{courseID}/Student")]
+        [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
+        public ActionResult<StudentDto> AddStudent(int courseID, StudentDto student)
+        {
+            try
+            {
+                if (!_cmsrepository.IsCourseExists(courseID))
+                {
+                    return NotFound();
+                }
+                Student studentModel = MappingHelper.MapStudentDtoToStudentModel(student);
+                Student studentAddedModel = _cmsrepository.AddStudent(courseID, studentModel);
+                var result = MappingHelper.MapStudentModelToStudentDto(studentAddedModel);
+                return result;
             }
             catch (System.Exception ex)
             {

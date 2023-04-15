@@ -20,6 +20,7 @@ namespace CmswebApI.Repository.Repositories
         Task<bool> DeleteCourseByIdAsync(int courseID);
         //Assoiation  
          IEnumerable<Student> GetStudent(int courseId);
-         Student AddStudent(int courseId,Student student);
+         Student AddStudent(int courseID,Student student);
+         
     }
 }

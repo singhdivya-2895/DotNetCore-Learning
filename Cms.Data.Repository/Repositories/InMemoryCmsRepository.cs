@@ -135,10 +135,17 @@ namespace CmswebApI.Repository.Repositories
             return studentList.Where(s => s.course.CourseID == courseId);
         }
 
-        public Student AddStudent(int courseId, Student student)
+
+        public Student AddStudent(int courseID, Student newStudent)
         {
-            throw new NotImplementedException();
+            var maxStudentId = studentList.Max(c => c.StudentId);
+            newStudent.StudentId = maxStudentId + 1;
+            Course courseToAdd = GetCourseById(courseID);
+            newStudent.course = courseToAdd;
+            studentList.Add(newStudent);
+            return newStudent;
         }
+
     }
 }
 
