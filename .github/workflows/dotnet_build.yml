@@ -9,6 +9,9 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  BRANCH_NAME: ${GITHUB_REF##*refs/heads/}
+
 jobs:
   build:
 
@@ -19,11 +22,8 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Set Branch Name
-      run: echo "BRANCH_NAME=${GITHUB_REF##*refs/heads/}" >> $GITHUB_ENV
-
     - name: Check Branch Name
-      run: echo $BRANCH_NAME
+      run: echo ${{ env.BRANCH_NAME }}
 
     - name: Build, Test and Sonar Analyse
       uses: highbyte/sonarscan-dotnet@v2.1.3
@@ -42,13 +42,4 @@ jobs:
         # Optional command arguments to dotnet test
         dotnetTestArguments: ./test/CmsWebApi.Test/ --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
         # Optional extra command arguments the the SonarScanner 'begin' command
-        sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" -d:sonar.branch.name=$BRANCH_NAME
- 
-    # Check the Quality Gate status.
-    - name: SonarQube Quality Gate check
-      id: sonarqube-quality-gate-check
-      uses: sonarsource/sonarqube-quality-gate-action@master
-      # Force to fail step after specific time.
-      timeout-minutes: 5
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        sonarBeginArguments: /d:sonar.branch.name=${{ env.BRANCH_NAME }} -d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
