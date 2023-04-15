@@ -47,7 +47,7 @@ jobs:
         # Optional command arguments to dotnet build
         dotnetBuildArguments: ./CmswebApI --configuration Debug
         # Optional command arguments to dotnet test
-        dotnetTestArguments: ../CmswebApI.Test/ --no-build --configuration Debug --logger "trx" /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
+        dotnetTestArguments: ./test/CmswebApI.Test/ --no-build --configuration Debug --logger "trx" /p:CollectCoverage=true /p:CoverletOutputFormat="opencover" /p:CoverletOutput=$(pwd)/TestResults/Coverage/
         # Optional extra command arguments the the SonarScanner 'begin' command
         sonarBeginArguments: /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" -d:sonar.cs.roslyn.ignoreIssues=true
           
