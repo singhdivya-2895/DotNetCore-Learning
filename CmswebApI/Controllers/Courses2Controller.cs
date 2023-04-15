@@ -13,14 +13,14 @@ using Cms.Data.Repository.Models;
 namespace CmswebApI.Controllers
 {
     [ApiController]
-    [ApiVersion("1.0")]
-    [Route("[controller]")]
-    public class CoursesController : ControllerBase
+    [ApiVersion("2.0")]
+    [Route("courses")]
+    public class Courses2Controller : ControllerBase
     {
         private readonly ICmsrepository _cmsrepository;
-        public CoursesController(ICmsrepository cmsrepository)
+        public Courses2Controller(ICmsrepository cmsrepository)
         {
-            this._cmsrepository = cmsrepository ?? throw new ArgumentNullException(nameof(cmsrepository));
+            this._cmsrepository = cmsrepository;
         }
         //Approach 1
         // [HttpGet]
@@ -52,7 +52,14 @@ namespace CmswebApI.Controllers
             {
                 IEnumerable<Course> courses = await _cmsrepository.GetAllCoursesAsync();
                 var result = MappingHelper.MapCourseModelListToCourseDtoList(courses);
-                return result.ToList();
+                var resultList = result.ToList();
+                //  version this as 2
+                foreach (var item in resultList)
+                {
+                    item.CourseName += " (v2.0)";
+                }
+
+                return resultList;
             }
             catch (System.Exception ex)
             {

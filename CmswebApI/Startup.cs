@@ -12,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models; 
 using FluentValidation.AspNetCore;
 using CmswebApI.DTOs;
 using CmswebApI.Validators;
@@ -55,35 +55,41 @@ namespace CmswebApI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CmswebApI", Version = "v1" });
                 foreach (var name in files) c.IncludeXmlComments(name);
             });
+            services.AddApiVersioning( setupAction =>
+             {
+                setupAction.AssumeDefaultVersionWhenUnspecified= true;
+                setupAction.DefaultApiVersion = new ApiVersion(1,0);
+             } );
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
-            app.UseHttpsRedirection();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();    
-                
-                // redirect the root URL to the Swagger UI URL
-                endpoints.MapGet("/", context =>
-                {
-                    context.Response.Redirect("/swagger");
-                    return Task.CompletedTask;
-                });
-            });
+            app.UseDeveloperExceptionPage();
         }
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
+        app.UseHttpsRedirection();
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+
+            // redirect the root URL to the Swagger UI URL
+            endpoints.MapGet("/", context =>
+            {
+                context.Response.Redirect("/swagger");
+                return Task.CompletedTask;
+            });
+        });
+ 
     }
-}
+}}
+
+
