@@ -30,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CmswebApI\CmswebApI.csproj" />
+    <ProjectReference Include="..\..\Cms.Data.Repository\Cms.Data.Repository.csproj" />
   </ItemGroup>
 
 </Project>
