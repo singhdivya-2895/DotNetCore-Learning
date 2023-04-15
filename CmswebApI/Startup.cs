@@ -16,7 +16,8 @@ using Microsoft.OpenApi.Models;
 using FluentValidation.AspNetCore;
 using CmswebApI.DTOs;
 using CmswebApI.Validators;
-using Swashbuckle.AspNetCore.SwaggerGen;
+using System.IO;
+using System.Text.Json.Serialization;
 
 namespace CmswebApI
 {
@@ -41,16 +42,18 @@ namespace CmswebApI
             // AddScoped: This lifetime creates a new instance of the service for each HTTP request. 
             // The instance is shared within the scope of the request, so it can be used by multiple components during the request.
             services.AddSingleton<ICmsrepository, InMemoryCmsRepository>();
-
             // Registering all fluent validators that are in assembly which have CourseDtoValidation (including)
             services.AddControllers()
                 .AddFluentValidation(fv =>
                     {
                         fv.RegisterValidatorsFromAssemblyContaining<CourseDtoValidator>();
                     });
+            var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.xml", SearchOption.AllDirectories);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CmswebApI", Version = "v1" });
+                foreach (var name in files) c.IncludeXmlComments(name);
             });
         }
 

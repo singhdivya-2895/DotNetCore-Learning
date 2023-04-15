@@ -150,7 +150,11 @@ namespace CmswebApI.Controllers
             }
         }
         #endregion
-        //  Association Get 1/Student
+        /// <summary>
+        /// Get the student on the base of Course Id
+        /// </summary>
+        /// <param name="courseID">Course Id</param>
+        /// <returns></returns>
         [HttpGet("{courseID}/Student")]
         public ActionResult<IEnumerable<StudentDto>> GetStudent(int courseID)
         {
@@ -170,9 +174,14 @@ namespace CmswebApI.Controllers
             }
         }
 
-        // To Add Student to the Course
+        
+        /// <summary>
+        ///     Add the student to the Course.
+        /// </summary>
+        /// <param name="courseID">Course Id</param>
+        /// <param name="student">Student Object</param>
+        /// <returns></returns>
         [HttpPost("{courseID}/Student")]
-        [ProducesResponseType(typeof(StudentDto), StatusCodes.Status200OK)]
         public ActionResult<StudentDto> AddStudent(int courseID, StudentDto student)
         {
             try
