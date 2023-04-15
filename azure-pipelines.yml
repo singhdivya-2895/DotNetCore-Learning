@@ -32,7 +32,7 @@ steps:
     projectKey: 'dotnetcore-learning'
     projectName: 'DotnetCore Learning'
     extraProperties: |
-      sonar.cs.opencover.reportsPaths;=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml 
+      sonar.cs.opencover.reportsPaths;=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml,$(Build.SourcesDirectory)/TestResults/Coverage/coverage.cobertura.xml
 
 - task: DotNetCoreCLI@2
   displayName: 'Build project'
