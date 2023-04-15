@@ -14,7 +14,7 @@ pool:
 
 variables:
   project: '**/*.csproj'
-  buildConfiguration: 'Release'
+  buildConfiguration: 'Debug'
 
 steps:
 - task: DotNetCoreCLI@2
