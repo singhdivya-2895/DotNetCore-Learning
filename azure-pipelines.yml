@@ -22,6 +22,17 @@ steps:
     projects: '$(project)'
   displayName: 'Restore NuGet packages'
 
+- task: SonarCloudPrepare@1
+  displayName: "Sonar - Prepare Analysis"
+  inputs:
+    SonarCloud: 'Sonar Cloud'
+    organization: 'singhdivya-2895'
+    scannerMode: 'MSBuild'
+    projectKey: 'singhdivya-2895_DotNetCore-Learning'
+    projectName: 'DotnetCore Learning'
+    extraProperties: |
+      sonar.cs.opencover.reportsPaths;=$(Build.SourcesDirectory)/TestResults/Coverage/coverage.opencover.xml 
+
 - task: DotNetCoreCLI@2
   displayName: 'Build project'
   inputs:
@@ -43,6 +54,14 @@ steps:
     arguments: '--no-build --configuration $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura%2copencover" /p:CoverletOutput=$(Build.SourcesDirectory)/TestResults/Coverage/'
     publishTestResults: true
     projects: '**/*Test.csproj'
+
+- task: SonarCloudAnalyze@1
+  displayName: "Sonar - Run Code Analysis"
+
+- task: SonarCloudPublish@1
+  displayName: "Sonar - Publish Quality Gate Results"
+  inputs:
+    pollingTimeoutSec: '300'
 
 - script: |
     reportgenerator -reports:$(Build.SourcesDirectory)/**/coverage.cobertura.xml -targetdir:$(Build.SourcesDirectory)/CodeCoverage -reporttypes:HtmlInline_AzurePipelines
