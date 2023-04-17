@@ -52,7 +52,7 @@ namespace CmswebApI.Controllers
             {
                 IEnumerable<Course> courses = await _cmsrepository.GetAllCoursesAsync();
                 var result = MappingHelper.MapCourseModelListToCourseDtoList(courses);
-                return result.ToList();
+                return Ok(result.ToList());
             }
             catch (System.Exception ex)
             {
@@ -76,7 +76,7 @@ namespace CmswebApI.Controllers
                 }
                 Course course = await _cmsrepository.GetCourseByIdAsync(courseID);
                 var result = MappingHelper.MapCourseModelToCourseDto(course);
-                return result;
+                return Ok(result);
             }
             catch (System.Exception ex)
             {
@@ -94,7 +94,7 @@ namespace CmswebApI.Controllers
             {
                 var courseModel = MappingHelper.MapCourseDtoToCourseModel(courseDto);
                 var newCourse = _cmsrepository.AddCourse(courseModel);
-                return MappingHelper.MapCourseModelToCourseDto(newCourse);
+                return Ok(MappingHelper.MapCourseModelToCourseDto(newCourse));
             }
             catch (System.Exception ex)
             {
@@ -117,7 +117,7 @@ namespace CmswebApI.Controllers
                 Course updatedCourseModel = MappingHelper.MapCourseDtoToCourseModel(course);
                 updatedCourseModel = await _cmsrepository.UpdateCourseAsync(courseID, updatedCourseModel);
                 var result = MappingHelper.MapCourseModelToCourseDto(updatedCourseModel);
-                return result;
+                return Ok(result);
             }
             catch (System.Exception ex)
             {
@@ -167,7 +167,7 @@ namespace CmswebApI.Controllers
                 }
                 IEnumerable<Student> studentModelList = _cmsrepository.GetStudent(courseID);
                 var result = MappingHelper.MapStudentModelListToStudentDtoList(studentModelList);
-                return result.ToList();
+                return Ok(result.ToList());
             }
             catch (System.Exception ex)
             {
@@ -194,7 +194,7 @@ namespace CmswebApI.Controllers
                 Student studentModel = MappingHelper.MapStudentDtoToStudentModel(student);
                 Student studentAddedModel = _cmsrepository.AddStudent(courseID, studentModel);
                 var result = MappingHelper.MapStudentModelToStudentDto(studentAddedModel);
-                return result;
+                return Ok(result);
             }
             catch (System.Exception ex)
             {
