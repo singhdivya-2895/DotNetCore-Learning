@@ -10,6 +10,7 @@ using CmswebApI.Repository.Models;
 using Microsoft.AspNetCore.Mvc;
 using CmswebApI.DTOs;
 using COURSE_TYPE = CmswebApI.Repository.Models.COURSE_TYPE;
+using COURSE_TYPE_2 = CmswebApI.DTOs.COURSE_TYPE;
 using Microsoft.AspNetCore.Http;
 
 namespace CmsWebApi.Test.Controllers
@@ -48,7 +49,7 @@ namespace CmsWebApi.Test.Controllers
             _mockRepo = new Mock<ICmsrepository>();
             _controller = new CoursesController(_mockRepo.Object);
 
-            var courses = new List<Course>
+            var coursesModel = new List<Course>
             {
                 new Course { 
                     CourseID = 2,
@@ -63,7 +64,23 @@ namespace CmsWebApi.Test.Controllers
                     CourseType = COURSE_TYPE.Engineering 
                 }
             };
-            _mockRepo.Setup(repo => repo.GetAllCoursesAsync()).ReturnsAsync(courses);
+            _mockRepo.Setup(repo => repo.GetAllCoursesAsync()).ReturnsAsync(coursesModel);
+
+            var expectedDtoList = new List<CourseDto>
+            {
+                new CourseDto { 
+                    CourseID = 2,
+                    CourseName = "Computer Science - Mock1",
+                    CourseDuration = 4,
+                    CourseType = COURSE_TYPE_2.Engineering 
+                },
+                new CourseDto { 
+                    CourseID = 1,
+                    CourseName = "Computer Science - Mock2",
+                    CourseDuration = 4,
+                    CourseType = COURSE_TYPE_2.Engineering 
+                }
+            };
 
             // Act
             var result = await _controller.GetCoursesAsync();
@@ -73,15 +90,14 @@ namespace CmsWebApi.Test.Controllers
             Assert.IsType<OkObjectResult>(result.Result);
 
             var okResult = (OkObjectResult)result.Result;
-            var coursesResult = (List<CourseDto>)okResult.Value;
-            Assert.Equal(courses.Count, coursesResult.Count);
-
-            for (int i = 0; i < courses.Count; i++)
+            var actualCourseDtoList = (List<CourseDto>)okResult.Value;
+            Assert.Equal(expectedDtoList.Count, actualCourseDtoList.Count);
+            for (int i = 0; i < expectedDtoList.Count; i++)
             {
-                Assert.Equal(courses[i].CourseID, coursesResult[i].CourseID);
-                Assert.Equal(courses[i].CourseName, coursesResult[i].CourseName);
-                Assert.Equal(courses[i].CourseDuration, coursesResult[i].CourseDuration);
-                Assert.Equal(courses[i].CourseType.ToString(), coursesResult[i].CourseType.ToString());
+                Assert.Equal(expectedDtoList[i].CourseID, actualCourseDtoList[i].CourseID);
+                Assert.Equal(expectedDtoList[i].CourseName, actualCourseDtoList[i].CourseName);
+                Assert.Equal(expectedDtoList[i].CourseDuration, actualCourseDtoList[i].CourseDuration);
+                Assert.Equal(expectedDtoList[i].CourseType, actualCourseDtoList[i].CourseType);
             }
         }
     
@@ -92,7 +108,7 @@ namespace CmsWebApi.Test.Controllers
             _mockRepo = new Mock<ICmsrepository>();
             _controller = new CoursesController(_mockRepo.Object);
             _mockRepo.Setup(repo => repo.GetAllCoursesAsync()).ThrowsAsync(new Exception("Test exception message"));
-
+            var expectedOutcome = StatusCodes.Status500InternalServerError;
             // Act
             var result = await _controller.GetCoursesAsync();
 
@@ -100,8 +116,8 @@ namespace CmsWebApi.Test.Controllers
             Assert.IsType<ActionResult<IEnumerable<CourseDto>>>(result);
             Assert.IsType<ObjectResult>(result.Result);
 
-            var statusCodeResult = (ObjectResult)result.Result;
-            Assert.Equal(StatusCodes.Status500InternalServerError, statusCodeResult.StatusCode);
+            var actualResult = (ObjectResult)result.Result;
+            Assert.Equal(expectedOutcome, actualResult.StatusCode);
         }
     }
 }
