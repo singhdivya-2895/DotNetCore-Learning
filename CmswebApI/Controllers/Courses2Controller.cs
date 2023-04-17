@@ -14,6 +14,7 @@ namespace CmswebApI.Controllers
 {
     [ApiController]
     [ApiVersion("2.0")]
+    // [Route("v{version:apiVersion}/courses")]
     [Route("courses")]
     public class Courses2Controller : ControllerBase
     {
@@ -58,7 +59,27 @@ namespace CmswebApI.Controllers
                 {
                     item.CourseName += " (v2.0)";
                 }
-
+                return resultList;
+            }
+            catch (System.Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+        [HttpGet]
+        [MapToApiVersion("3.0")]
+        public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesAsync_3()
+        {
+            try
+            {
+                IEnumerable<Course> courses = await _cmsrepository.GetAllCoursesAsync();
+                var result = MappingHelper.MapCourseModelListToCourseDtoList(courses);
+                var resultList = result.ToList();
+                //  version this as 2
+                foreach (var item in resultList)
+                {
+                    item.CourseName += " (v3.0)";
+                }
                 return resultList;
             }
             catch (System.Exception ex)
