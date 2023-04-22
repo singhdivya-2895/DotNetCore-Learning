@@ -89,12 +89,12 @@ namespace CmswebApI.Controllers
 
         #region "Post Routes"
         [HttpPost]
-        public ActionResult<CourseDto> AddCourse([FromBody] CourseDto courseDto)
+        public async Task<ActionResult<CourseDto>> AddCourseAsync([FromBody] CourseDto courseDto)
         {
             try
             {
                 var courseModel = MappingHelper.MapCourseDtoToCourseModel(courseDto);
-                var newCourse = _cmsrepository.AddCourse(courseModel);
+                var newCourse = await _cmsrepository.AddCourseAsync(courseModel);
                 return Ok(MappingHelper.MapCourseModelToCourseDto(newCourse));
             }
             catch (System.Exception ex)
@@ -111,12 +111,14 @@ namespace CmswebApI.Controllers
         {
             try
             {
-                if (!_cmsrepository.IsCourseExists(courseID))
+                Course updatedCourseModel = MappingHelper.MapCourseDtoToCourseModel(course);
+                updatedCourseModel = await _cmsrepository.UpdateCourseAsync(courseID, updatedCourseModel);
+
+                if (updatedCourseModel == null)
                 {
                     return NotFound();
                 }
-                Course updatedCourseModel = MappingHelper.MapCourseDtoToCourseModel(course);
-                updatedCourseModel = await _cmsrepository.UpdateCourseAsync(courseID, updatedCourseModel);
+
                 var result = MappingHelper.MapCourseModelToCourseDto(updatedCourseModel);
                 return Ok(result);
             }
@@ -137,6 +139,7 @@ namespace CmswebApI.Controllers
                 {
                     return BadRequest($"Course with Id {courseID} not found");
                 }
+
                 var result = await _cmsrepository.DeleteCourseByIdAsync(courseID);
 
                 if (!result)
@@ -144,7 +147,7 @@ namespace CmswebApI.Controllers
                     return BadRequest();
                 }
 
-                return Ok();
+                return Ok($"Course with Id {courseID} deleted successfully.");
             }
             catch (System.Exception ex)
             {

@@ -14,9 +14,9 @@ namespace CmswebApI.Validators
 
         public CourseDtoValidator()
         {
-            RuleFor(t => t.CourseID)
-                .NotEmpty() // Check if it is empty else give the below validation message
-                    .WithMessage("Please Provide a Course ID");
+            //RuleFor(t => t.CourseID)
+            //    .NotEmpty() // Check if it is empty else give the below validation message
+            //        .WithMessage("Please Provide a Course ID");
 
             RuleFor(t => t.CourseName)
                 .NotEmpty() // Check if it is empty else give the below validation message

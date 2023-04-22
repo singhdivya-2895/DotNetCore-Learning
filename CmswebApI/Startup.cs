@@ -19,6 +19,8 @@ using CmswebApI.Validators;
 using System.IO;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Cms.Data.Repository.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CmswebApI
 {
@@ -42,7 +44,7 @@ namespace CmswebApI
 
             // AddScoped: This lifetime creates a new instance of the service for each HTTP request. 
             // The instance is shared within the scope of the request, so it can be used by multiple components during the request.
-            services.AddSingleton<ICmsrepository, InMemoryCmsRepository>();
+            services.AddScoped<ICmsrepository, SqlCmsRepository>();
             // Registering all fluent validators that are in assembly which have CourseDtoValidation (including)
             services.AddControllers()
                 .AddFluentValidation(fv =>
@@ -56,6 +58,9 @@ namespace CmswebApI
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CmswebApI", Version = "v1" });
                 foreach (var name in files) c.IncludeXmlComments(name);
             });
+            services.AddDbContext<CollegeDbContext>(
+                    options => options
+                         .UseSqlServer(Configuration.GetConnectionString("CollegeConnectionString")));
             services.AddApiVersioning(setupAction =>
              {
                  setupAction.AssumeDefaultVersionWhenUnspecified = true;
@@ -66,14 +71,15 @@ namespace CmswebApI
                  //This One is for URL Versioning
                  // setupAction.ApiVersionReader = new UrlSegmentApiVersionReader();
                  // this is used for Header Version
-                // setupAction.ApiVersionReader = new HeaderApiVersionReader("X-Version");
-                  
-                  setupAction.ApiVersionReader = ApiVersionReader.Combine(
-                    new QueryStringApiVersionReader("v"),
-                    new HeaderApiVersionReader("X-Version")
-                  );
+                 // setupAction.ApiVersionReader = new HeaderApiVersionReader("X-Version");
+
+                 setupAction.ApiVersionReader = ApiVersionReader.Combine(
+                   new QueryStringApiVersionReader("v"),
+                   new HeaderApiVersionReader("X-Version")
+                 );
 
              });
+
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
