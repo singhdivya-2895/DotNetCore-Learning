@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Cms.Data.Repository.Data;
 using Cms.Data.Repository.Models;
 using CmswebApI.Repository.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CmswebApI.Repository.Repositories
 {
     public class SqlCmsRepository : ICmsrepository
     {
-        public SqlCmsRepository()
+        private readonly CollegeDbContext _dbContext;
+        public SqlCmsRepository(CollegeDbContext dbContext)
         {
+            _dbContext = dbContext;
         }
 
         public Course AddCourse(Course newCourse)
@@ -18,24 +23,38 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
+        public async Task<Course> AddCourseAsync(Course newCourse)
+        {
+           await _dbContext.CourseList.AddAsync(newCourse);
+           await _dbContext.SaveChangesAsync();
+            return newCourse;
+        }
+
         public Student AddStudent(int courseId, Student student)
         {
             throw new NotImplementedException();
         }
 
-        public Task<Course> DeleteCourseByIdAsync(int courseID)
+        public async Task<bool> DeleteCourseByIdAsync(int courseID)
         {
-            throw new NotImplementedException();
+            var courseToDelete = _dbContext.CourseList.FirstOrDefault(x => x.CourseID == courseID);
+            if (courseToDelete == null)
+            {
+                return false;
+            }
+            _dbContext.CourseList.Remove(courseToDelete);
+            await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public IEnumerable<Course> GetAllCourses()
         {
-            return null;
+            throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<Course>> GetAllCoursesAsync()
+        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
         {
-            throw new NotImplementedException();
+            return await _dbContext.CourseList.ToListAsync();
         }
 
         public Course GetCourseById(int courseID)
@@ -43,9 +62,14 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Course> GetCourseByIdAsync(int courseID)
+        public async Task<Course> GetCourseByIdAsync(int courseID)
         {
-            throw new NotImplementedException();
+           var getCourseById =await _dbContext.CourseList.FirstOrDefaultAsync(x => x.CourseID==courseID);
+            if (getCourseById == null)
+            {
+              return null;
+            }
+            return getCourseById;
         }
 
         public IEnumerable<Student> GetStudent(int courseId)
@@ -58,24 +82,24 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
-        public bool IsCourseExistsAsync(int courseID)
+        public async Task<bool> IsCourseExistsAsync(int courseID)
         {
-            throw new NotImplementedException();
+            return await _dbContext.CourseList.AnyAsync(x => x.CourseID == courseID);
         }
 
-        public async Task<Course> UpdateCourseAsync(int courseID, Course Newcourse)
+        public async Task<Course> UpdateCourseAsync(int courseID, Course newCourse)
         {
-            throw new NotImplementedException();
-        }
+            var courseToUpdate = await _dbContext.CourseList.FirstOrDefaultAsync(x => x.CourseID == courseID);
+            if (courseToUpdate == null)
+            {
+                return null;
+            }
+            courseToUpdate.CourseName = newCourse.CourseName;
+            courseToUpdate.CourseDuration = newCourse.CourseDuration;
+            courseToUpdate.CourseType = newCourse.CourseType;
 
-        Task<bool> ICmsrepository.DeleteCourseByIdAsync(int courseID)
-        {
-            throw new NotImplementedException();
-        }
-
-        Task<bool> ICmsrepository.IsCourseExistsAsync(int courseID)
-        {
-            throw new NotImplementedException();
+            await _dbContext.SaveChangesAsync();
+            return courseToUpdate;
         }
     }
 }
