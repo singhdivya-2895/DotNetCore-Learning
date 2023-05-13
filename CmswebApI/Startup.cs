@@ -21,6 +21,7 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Cms.Data.Repository.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 namespace CmswebApI
 {
@@ -51,6 +52,17 @@ namespace CmswebApI
                     {
                         fv.RegisterValidatorsFromAssemblyContaining<CourseDtoValidator>();
                     });
+
+            services.AddApiVersioning(options =>
+             {
+                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+             });
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;   
+            });
             var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.xml", SearchOption.AllDirectories);
 
             services.AddSwaggerGen(c =>
@@ -90,7 +102,15 @@ namespace CmswebApI
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
+            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
+            app.UseSwaggerUI(options =>
+            {
+              foreach(var description in versionDescriptionProvider.ApiVersionDescriptions) 
+              {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+              }
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();
