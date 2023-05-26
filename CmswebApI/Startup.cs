@@ -21,6 +21,8 @@ using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Cms.Data.Repository.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace CmswebApI
 {
@@ -51,18 +53,29 @@ namespace CmswebApI
                     {
                         fv.RegisterValidatorsFromAssemblyContaining<CourseDtoValidator>();
                     });
-            var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.xml", SearchOption.AllDirectories);
 
+            services.AddApiVersioning(options =>
+             {
+                options.DefaultApiVersion = new Microsoft.AspNetCore.Mvc.ApiVersion(1, 0);
+                options.ReportApiVersions = true;
+             });
+            services.AddVersionedApiExplorer(options =>
+            {
+                options.GroupNameFormat = "'v'VVV";
+                options.SubstituteApiVersionInUrl = true;   
+            });
+            var files = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "*.xml", SearchOption.AllDirectories);
+            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CmswebApI", Version = "v1" });
+                //c.SwaggerDoc("v1", new OpenApiInfo { Title = "CmswebApI", Version = "v1" });
                 foreach (var name in files) c.IncludeXmlComments(name);
             });
             services.AddDbContext<CollegeDbContext>(
                     options => options
                          .UseSqlServer(Configuration.GetConnectionString("CollegeConnectionString")));
             services.AddApiVersioning(setupAction =>
-             {
+            {
                  setupAction.AssumeDefaultVersionWhenUnspecified = true;
                  setupAction.DefaultApiVersion = new ApiVersion(1, 0);
                  //This one is for QueryString Versioning
@@ -90,7 +103,16 @@ namespace CmswebApI
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
+            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CmswebApI v1"));
+            var versionDescriptionProvider = app.ApplicationServices.GetRequiredService<IApiVersionDescriptionProvider>();
+            app.UseSwaggerUI(options =>
+            {
+              foreach(var description in versionDescriptionProvider.ApiVersionDescriptions) 
+              {
+                    options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
+                        description.GroupName.ToUpperInvariant());
+              }
+            });
             app.UseHttpsRedirection();
 
             app.UseRouting();
