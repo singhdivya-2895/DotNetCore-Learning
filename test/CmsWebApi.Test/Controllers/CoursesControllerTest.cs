@@ -64,7 +64,7 @@ namespace CmsWebApi.Test.Controllers
                     CourseType = COURSE_TYPE.Engineering 
                 }
             };
-            _mockRepo.Setup(repo => repo.GetAllCoursesAsync()).ReturnsAsync(coursesModel);
+            _mockRepo.Setup(repo => repo.AddCoursesAsync()).ReturnsAsync(coursesModel);
 
             var expectedDtoList = new List<CourseDto>
             {
@@ -107,7 +107,7 @@ namespace CmsWebApi.Test.Controllers
             // Arrange
             _mockRepo = new Mock<ICmsrepository>();
             _controller = new CoursesController(_mockRepo.Object);
-            _mockRepo.Setup(repo => repo.GetAllCoursesAsync()).ThrowsAsync(new Exception("Test exception message"));
+            _mockRepo.Setup(repo => repo.AddCoursesAsync()).ThrowsAsync(new Exception("Test exception message"));
             var expectedOutcome = StatusCodes.Status500InternalServerError;
             // Act
             var result = await _controller.GetCoursesAsync();
@@ -118,6 +118,63 @@ namespace CmsWebApi.Test.Controllers
 
             var actualResult = (ObjectResult)result.Result;
             Assert.Equal(expectedOutcome, actualResult.StatusCode);
+        }
+
+        [Fact]
+        public async Task AddCoursesAsync_WhenErrorOccurs_ReturnsInternalServerError()
+        {
+            // Arrange
+            _mockRepo = new Mock<ICmsrepository>();
+            _controller = new CoursesController(_mockRepo.Object);
+            _mockRepo.Setup(repo => repo.AddCourseAsync(It.IsAny<Course>())).ThrowsAsync(new Exception("Test exception message"));
+            var expectedOutcome = StatusCodes.Status500InternalServerError;
+            var dto = new CourseDto();
+
+            // Act
+            var result = await _controller.AddCourseAsync(dto);
+
+            // Assert
+            Assert.IsType<ActionResult<CourseDto>>(result);
+
+            var actualResult = (ObjectResult)result.Result;
+            Assert.Equal(expectedOutcome, actualResult.StatusCode);
+        }
+        [Fact]
+        public async Task AddCoursesAsync_WhenCalled_ReturnsOkResultWithExpectedData()
+        {
+            // Arrange
+            _mockRepo = new Mock<ICmsrepository>();
+            _controller = new CoursesController(_mockRepo.Object);
+            var newCourse = new Course() {
+                CourseID = 100,
+                CourseDuration = 2,
+                CourseName = "Mock",
+                CourseType = COURSE_TYPE.Medical                
+            };
+            _mockRepo.Setup(repo => repo.AddCourseAsync(It.IsAny<Course>())).ReturnsAsync(newCourse);
+            var dto = new CourseDto();
+            var expectedDto = new CourseDto()
+            {
+                CourseID = 100,
+                CourseDuration = 2,
+                CourseName = "Mock",
+                CourseType = COURSE_TYPE_2.Medical
+            };
+           
+
+            // Act
+            var result = await _controller.AddCourseAsync(dto);
+
+            // Assert
+            Assert.IsType<ActionResult<CourseDto>>(result);
+            Assert.IsType<OkObjectResult>(result.Result);
+
+            var okResult = (OkObjectResult)result.Result;
+            var actualCourseDto = (CourseDto)okResult.Value;
+            Assert.Equal(expectedDto.CourseID, actualCourseDto.CourseID);
+            Assert.Equal(expectedDto.CourseDuration, actualCourseDto.CourseDuration);
+            Assert.Equal(expectedDto.CourseName, actualCourseDto.CourseName);
+
         }
     }
 }

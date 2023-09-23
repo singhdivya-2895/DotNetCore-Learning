@@ -52,7 +52,7 @@ namespace CmswebApI.Repository.Repositories
             throw new NotImplementedException();
         }
 
-        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        public async Task<IEnumerable<Course>> AddCoursesAsync()
         {
             return await _dbContext.CourseList.ToListAsync();
         }

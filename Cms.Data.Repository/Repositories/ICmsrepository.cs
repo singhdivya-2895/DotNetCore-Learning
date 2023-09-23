@@ -10,7 +10,7 @@ namespace CmswebApI.Repository.Repositories
     public interface ICmsrepository
     {
         IEnumerable<Course> GetAllCourses();
-        Task<IEnumerable<Course>> GetAllCoursesAsync();
+        Task<IEnumerable<Course>> AddCoursesAsync();
         Course AddCourse(Course newCourse);
         Task<Course> AddCourseAsync(Course newCourse);
         bool IsCourseExists(int courseID);

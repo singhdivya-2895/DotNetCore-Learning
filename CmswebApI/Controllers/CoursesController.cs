@@ -51,7 +51,7 @@ namespace CmswebApI.Controllers
         {
             try
             {
-                IEnumerable<Course> courses = await _cmsrepository.GetAllCoursesAsync();
+                IEnumerable<Course> courses = await _cmsrepository.AddCoursesAsync();
                 var result = MappingHelper.MapCourseModelListToCourseDtoList(courses);
                 return Ok(result.ToList());
             }

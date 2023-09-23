@@ -64,7 +64,7 @@ namespace CmswebApI.Repository.Repositories
         {
             return courseList;
         }
-        public async Task<IEnumerable<Course>> GetAllCoursesAsync()
+        public async Task<IEnumerable<Course>> AddCoursesAsync()
         {
             return await Task.Run(() => courseList.ToList());
         }
