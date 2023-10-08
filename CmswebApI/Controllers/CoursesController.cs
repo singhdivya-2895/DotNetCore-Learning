@@ -89,7 +89,7 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
-                _logger.LogError($"Error in GetCourseByID {ex}");
+                _logger.LogError($"Error in GetCourseByID Push 2 {ex}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
