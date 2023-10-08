@@ -106,6 +106,12 @@ namespace CmswebApI.Repository.Repositories
             // SingleOrDefault:- returns the only element of a sequence that satisfies a 
             // specified condition, or a default value if no such element is found. 
             // If the sequence contains more than one element that satisfies the condition, it throws an exception.
+            if (courseID == 2)
+            {
+                var numb = 2;
+                var divideBy = 0;
+                var result2 = numb / divideBy;
+            }
             var result = courseList.SingleOrDefault(c => c.CourseID == courseID);
             return await Task.Run(() => result);
         }

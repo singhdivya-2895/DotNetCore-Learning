@@ -12,6 +12,7 @@ using CmswebApI.DTOs;
 using COURSE_TYPE = CmswebApI.Repository.Models.COURSE_TYPE;
 using COURSE_TYPE_2 = CmswebApI.DTOs.COURSE_TYPE;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace CmsWebApi.Test.Controllers
 {
@@ -19,13 +20,14 @@ namespace CmsWebApi.Test.Controllers
     {
         private Mock<ICmsrepository> _mockRepo;
         private CoursesController _controller;
+        private ILogger<CoursesController> _loggerMock;
 
         [Fact]
         public void Constructor_Throws()
         {
             // Arrange
             // Act 
-            Action act = () => _ = new CoursesController(null);
+            Action act = () => _ = new CoursesController(null, null);
             // Assert
             act.Should().Throw<ArgumentNullException>("Because the Icmsrepository was not supplied");
         }
@@ -37,7 +39,7 @@ namespace CmsWebApi.Test.Controllers
             // Arrange            
             var cmsRepository = new Mock<ICmsrepository>();
             // Act 
-            Action act = () => _ = new CoursesController(cmsRepository.Object);
+            Action act = () => _ = new CoursesController(cmsRepository.Object, _loggerMock);
             // Assert
             act.Should().NotThrow<ArgumentNullException>();
         }
@@ -47,7 +49,7 @@ namespace CmsWebApi.Test.Controllers
         {
             // Arrange
             _mockRepo = new Mock<ICmsrepository>();
-            _controller = new CoursesController(_mockRepo.Object);
+            _controller = new CoursesController(_mockRepo.Object, _loggerMock);
 
             var coursesModel = new List<Course>
             {
@@ -106,7 +108,7 @@ namespace CmsWebApi.Test.Controllers
         {
             // Arrange
             _mockRepo = new Mock<ICmsrepository>();
-            _controller = new CoursesController(_mockRepo.Object);
+            _controller = new CoursesController(_mockRepo.Object, _loggerMock);
             _mockRepo.Setup(repo => repo.GetAllCoursesAsync()).ThrowsAsync(new Exception("Test exception message"));
             var expectedOutcome = StatusCodes.Status500InternalServerError;
             // Act
