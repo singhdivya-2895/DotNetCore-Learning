@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Cms.Data.Repository.Models;
 using CmswebApI.Repository.Models;
+using Microsoft.Extensions.Logging;
 
 namespace CmswebApI.Repository.Repositories
 {
@@ -11,7 +13,9 @@ namespace CmswebApI.Repository.Repositories
     {
         List<Course> courseList = null;
         List<Student> studentList = null;
-        public InMemoryCmsRepository()
+        private readonly ILogger _logger;
+
+        public InMemoryCmsRepository(ILogger<InMemoryCmsRepository> logger)
         {
             courseList = new List<Course>(){
               new ()
@@ -59,6 +63,7 @@ namespace CmswebApI.Repository.Repositories
                  course = courseList.Where(c => c.CourseID == 2).SingleOrDefault()
              }
             };
+            _logger = logger;
         }
         public IEnumerable<Course> GetAllCourses()
         {
@@ -71,16 +76,20 @@ namespace CmswebApI.Repository.Repositories
 
         public Course AddCourse(Course newCourse)
         {
+            _logger.LogInformation($"Request to add a new Course Started");
             var maxCourseID = courseList.Max(c => c.CourseID);
             newCourse.CourseID = maxCourseID + 1;
             // Add Course in Database in future
             courseList.Add(newCourse);
+            _logger.LogInformation($"Request to add a new Course Finished: { JsonSerializer.Serialize(newCourse) }");
             return newCourse;
         }
 
         public Course GetCourseById(int courseID)
         {
+            _logger.LogInformation($"Request to get a Course with Id:{courseID} started.");
             var result = courseList.SingleOrDefault(c => c.CourseID == courseID);
+            _logger.LogInformation($"Request to get a Course with Id:{courseID} finished.");
             return result;
         }
         public bool IsCourseExists(int courseID)
@@ -107,6 +116,7 @@ namespace CmswebApI.Repository.Repositories
         }
         public async Task<Course> UpdateCourseAsync(int courseID, Course Updatedcourse)
         {
+            _logger.LogInformation($"Request to Update a Course  started.");
             var result = await GetCourseByIdAsync(courseID);
 
             if (result != null) // Null when the course with this id wont exist
@@ -116,17 +126,20 @@ namespace CmswebApI.Repository.Repositories
                 result.CourseType = Updatedcourse.CourseType;
             }
             // Normally you will send the updates back to source i.e. Database
+            _logger.LogInformation($"Request to Update a Course finished.");
             return result;
         }
-
+             
         public async Task<bool> DeleteCourseByIdAsync(int courseID)
         {
+            _logger.LogInformation($"Request to Delete a Course  started.");
             var result = courseList.SingleOrDefault(c => c.CourseID == courseID);
             if (result == null)
             {
                 return false;
             }
             courseList.Remove(result);
+            _logger.LogInformation($"Request to Delete a Course finished.");
             return true;
         }
 
@@ -135,24 +148,27 @@ namespace CmswebApI.Repository.Repositories
             return studentList.Where(s => s.course.CourseID == courseId);
         }
 
-
         public Student AddStudent(int courseID, Student newStudent)
         {
+            _logger.LogInformation($"Request to Add Student Started");
             var maxStudentId = studentList.Max(c => c.StudentId);
             newStudent.StudentId = maxStudentId + 1;
             Course courseToAdd = GetCourseById(courseID);
             newStudent.course = courseToAdd;
             studentList.Add(newStudent);
+            _logger.LogInformation($"Request to Add Student finished");
             return newStudent;
         }
 
         public async Task<Course> AddCourseAsync(Course newCourse)
         {
+            _logger.LogInformation($"Request to Add Course Started");
             var maxCourseID = courseList.Max(c => c.CourseID);
             newCourse.CourseID = maxCourseID + 1;
             // Add Course in Database in future
             courseList.Add(newCourse);
-            return await Task.Run(() => newCourse); ;
+            _logger.LogInformation($"Request to Add Course Finished");
+            return await Task.Run(() => newCourse); 
         }
     }
 }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CmswebApI.Mapping;
 using Cms.Data.Repository.Models;
+using Microsoft.Extensions.Logging;
 
 namespace CmswebApI.Controllers
 {
@@ -19,9 +20,12 @@ namespace CmswebApI.Controllers
     public class CoursesController : ControllerBase
     {
         private readonly ICmsrepository _cmsrepository;
-        public CoursesController(ICmsrepository cmsrepository)
+        private readonly ILogger<CoursesController> _logger;
+
+        public CoursesController(ICmsrepository cmsrepository,ILogger<CoursesController> logger)
         {
             this._cmsrepository = cmsrepository ?? throw new ArgumentNullException(nameof(cmsrepository));
+            _logger = logger;
         }
         //Approach 1
         // [HttpGet]
@@ -49,6 +53,7 @@ namespace CmswebApI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CourseDto>>> GetCoursesAsync()
         {
+            _logger.LogInformation("GetCourses Started");
             try
             {
                 IEnumerable<Course> courses = await _cmsrepository.GetAllCoursesAsync();
@@ -57,13 +62,16 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError($"Error in GetCoursesAsync {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+                //_logger.LogError($"Error in GetCoursesAsync {ex.Message}");
             }
         }
 
         [HttpGet("{courseID}")]
         public async Task<ActionResult<CourseDto>> GetCourseByIdAsync(int courseID)
         {
+            _logger.LogInformation("GetCourses with ID Started");
             try
             {
                 // E.g: Id is 5, so Any will return false if 5 id doesn't exist.
@@ -81,6 +89,7 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError($"Error in GetCourseByID {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -91,6 +100,7 @@ namespace CmswebApI.Controllers
         [HttpPost]
         public async Task<ActionResult<CourseDto>> AddCourseAsync([FromBody] CourseDto courseDto)
         {
+            _logger.LogInformation(" AddCourses Started");
             try
             {
                 var courseModel = MappingHelper.MapCourseDtoToCourseModel(courseDto);
@@ -99,6 +109,7 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError($"Error in AddCourse {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -109,6 +120,8 @@ namespace CmswebApI.Controllers
         [HttpPut("{courseID}")]
         public async Task<ActionResult<CourseDto>> UpdateCourseAsync(int courseID, CourseDto course)
         {
+
+            _logger.LogInformation(" UpdateCourse Started");
             try
             {
                 Course updatedCourseModel = MappingHelper.MapCourseDtoToCourseModel(course);
@@ -124,6 +137,7 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError($"Error in UpdateCourse {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -133,6 +147,7 @@ namespace CmswebApI.Controllers
         [HttpDelete("{courseID}")]
         public async Task<ActionResult<CourseDto>> DeleteCourseByIdAsync(int courseID)
         {
+            _logger.LogInformation(" DeleteCourse with Id Started");
             try
             {
                 if (!await _cmsrepository.IsCourseExistsAsync(courseID))
@@ -151,6 +166,7 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError($"Error in DeleteCourse {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -163,6 +179,7 @@ namespace CmswebApI.Controllers
         [HttpGet("{courseID}/Student")]
         public ActionResult<IEnumerable<StudentDto>> GetStudent(int courseID)
         {
+            _logger.LogInformation(" To Get Student Started");
             try
             {
                 if (!_cmsrepository.IsCourseExists(courseID))
@@ -175,6 +192,7 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError($"Error in GetStudent {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }
@@ -189,6 +207,7 @@ namespace CmswebApI.Controllers
         [HttpPost("{courseID}/Student")]
         public ActionResult<StudentDto> AddStudent(int courseID, StudentDto student)
         {
+            _logger.LogInformation("AddStudent Started");
             try
             {
                 if (!_cmsrepository.IsCourseExists(courseID))
@@ -202,6 +221,7 @@ namespace CmswebApI.Controllers
             }
             catch (System.Exception ex)
             {
+                _logger.LogError($"Error in AddStudent {ex.Message}");
                 return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
             }
         }

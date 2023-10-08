@@ -11,7 +11,6 @@ namespace CmswebApI.Validators
     // Status Code: 400 (Bad Request) if validation fails
     public class CourseDtoValidator : AbstractValidator<CourseDto>
     {
-
         public CourseDtoValidator()
         {
             //RuleFor(t => t.CourseID)

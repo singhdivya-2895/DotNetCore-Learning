@@ -46,7 +46,7 @@ namespace CmswebApI
 
             // AddScoped: This lifetime creates a new instance of the service for each HTTP request. 
             // The instance is shared within the scope of the request, so it can be used by multiple components during the request.
-            services.AddScoped<ICmsrepository, SqlCmsRepository>();
+            services.AddSingleton<ICmsrepository, InMemoryCmsRepository>();
             // Registering all fluent validators that are in assembly which have CourseDtoValidation (including)
             services.AddControllers()
                 .AddFluentValidation(fv =>
